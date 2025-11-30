@@ -179,6 +179,7 @@ summary_stats = {
 
 import json
 with open('output/cleaning_summary.json', 'w') as f:
+    summary_stats = {k: int(v) if hasattr(v, "__int__") else v for k, v in summary_stats.items()}
     json.dump(summary_stats, f, indent=2)
 
 print("\n=== Data Cleaning Complete ===")

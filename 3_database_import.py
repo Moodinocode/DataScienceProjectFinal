@@ -18,7 +18,7 @@ DB_CONFIG = {
     'host': 'localhost',
     'database': 'online_retail_db',
     'user': 'postgres',  # Change as needed
-    'password': 'postgres',  # Change as needed
+    'password': '123456',  # Change as needed
     'port': 5432
 }
 
@@ -102,6 +102,10 @@ try:
     
     # Map column names
     column_mapping = {
+        'invoiceno': 'invoice_no',
+        'stockcode': 'stock_code',
+        'invoicedate': 'invoice_date',
+        'unitprice': 'unit_price',
         'customerid': 'customer_id',
         'customerid_imputed': 'customer_id_imputed',
         'totalrevenue': 'total_revenue',
@@ -110,7 +114,7 @@ try:
         'highvaluetransaction': 'high_value_transaction',
         'extremequantity': 'extreme_quantity',
         'extremeprice': 'extreme_price',
-        'extreverevenue': 'extreme_revenue'
+        'extremerevenue': 'extreme_revenue'
     }
     
     data_db = data_db.rename(columns=column_mapping)

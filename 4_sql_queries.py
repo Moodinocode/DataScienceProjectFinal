@@ -16,7 +16,7 @@ DB_CONFIG = {
     'host': 'localhost',
     'database': 'online_retail_db',
     'user': 'postgres',
-    'password': 'postgres',
+    'password': '123456',
     'port': 5432
 }
 
