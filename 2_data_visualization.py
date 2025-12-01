@@ -23,42 +23,45 @@ print(f"Dataset shape: {data.shape}")
 
 # 1. Histogram - Distribution of Total Revenue
 print("\nCreating histogram: Distribution of Total Revenue...")
-plot1 = (ggplot(data, aes(x='TotalRevenue')) +
-         geom_histogram(bins=50, fill='#0072b2', color='black') +
-         xlab('Total Revenue per Transaction ($)') +
-         ylab('Frequency') +
-         ggtitle('Distribution of Total Revenue per Transaction') +
-         theme(figure_size=(10, 6))
-        )
+rev_99 = data['TotalRevenue'].quantile(0.99)
+data_rev = data[data['TotalRevenue'] <= rev_99]
+
+plot1 = (ggplot(data_rev, aes(x='TotalRevenue'))
+         + geom_histogram(bins=50, fill='#0072b2', color='black')
+         + xlab('Total Revenue per Transaction ($)')
+         + ylab('Frequency')
+         + ggtitle('Distribution of Total Revenue per Transaction (<= 99th percentile)')
+         + theme(figure_size=(10, 6)))
+
 plot1.save('output/visualizations/1_histogram_revenue.png', dpi=300)
 print("Saved: output/visualizations/1_histogram_revenue.png")
 
 # 2. Box Plot - Revenue by Time of Day
-print("\nCreating box plot: Revenue by Time of Day...")
-plot2 = (ggplot(data, aes(x='TimeOfDay', y='TotalRevenue', fill='TimeOfDay')) +
-         geom_boxplot() +
-         xlab('Time of Day') +
-         ylab('Total Revenue ($)') +
-         ggtitle('Distribution of Revenue by Time of Day') +
-         theme(figure_size=(10, 6))
-        )
-plot2.save('output/visualizations/2_boxplot_revenue_by_time.png', dpi=300)
-print("Saved: output/visualizations/2_boxplot_revenue_by_time.png")
+# print("\nCreating box plot: Revenue by Time of Day...")
+# plot2 = (ggplot(data, aes(x='TimeOfDay', y='TotalRevenue', fill='TimeOfDay')) +
+#          geom_boxplot() +
+#          xlab('Time of Day') +
+#          ylab('Total Revenue ($)') +
+#          ggtitle('Distribution of Revenue by Time of Day') +
+#          theme(figure_size=(10, 6))
+#         )
+# plot2.save('output/visualizations/2_boxplot_revenue_by_time.png', dpi=300)
+# print("Saved: output/visualizations/2_boxplot_revenue_by_time.png")
 
-# 3. Box Plot - Revenue by Day of Week
-print("\nCreating box plot: Revenue by Day of Week...")
+# # 3. Box Plot - Revenue by Day of Week
+# print("\nCreating box plot: Revenue by Day of Week...")
 day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 data['DayOfWeek'] = pd.Categorical(data['DayOfWeek'], categories=day_order, ordered=True)
 
-plot3 = (ggplot(data, aes(x='DayOfWeek', y='TotalRevenue', fill='DayOfWeek')) +
-         geom_boxplot() +
-         xlab('Day of Week') +
-         ylab('Total Revenue ($)') +
-         ggtitle('Distribution of Revenue by Day of Week') +
-         theme(figure_size=(12, 6), axis_text_x=element_text(angle=45, hjust=1))
-        )
-plot3.save('output/visualizations/3_boxplot_revenue_by_day.png', dpi=300)
-print("Saved: output/visualizations/3_boxplot_revenue_by_day.png")
+# plot3 = (ggplot(data, aes(x='DayOfWeek', y='TotalRevenue', fill='DayOfWeek')) +
+#          geom_boxplot() +
+#          xlab('Day of Week') +
+#          ylab('Total Revenue ($)') +
+#          ggtitle('Distribution of Revenue by Day of Week') +
+#          theme(figure_size=(12, 6), axis_text_x=element_text(angle=45, hjust=1))
+#         )
+# plot3.save('output/visualizations/3_boxplot_revenue_by_day.png', dpi=300)
+# print("Saved: output/visualizations/3_boxplot_revenue_by_day.png")
 
 # 4. Column Chart - Total Sales by Day of Week
 print("\nCreating column chart: Total Sales by Day of Week...")
@@ -116,19 +119,26 @@ print("Saved: output/visualizations/6_line_sales_over_time.png")
 
 # 7. Scatter Plot - Quantity vs Unit Price
 print("\nCreating scatter plot: Quantity vs Unit Price...")
-# Sample data for better visualization (too many points)
-data_sample = data.sample(min(10000, len(data)), random_state=42)
 
-plot7 = (ggplot(data_sample, aes(x='UnitPrice', y='Quantity')) +
-         geom_point(alpha=0.3, color='blue') +
-         geom_smooth(method='lm', se=False, color='red') +
-         xlab('Unit Price ($)') +
-         ylab('Quantity') +
-         ggtitle('Relationship Between Unit Price and Quantity') +
-         theme(figure_size=(10, 6))
-        )
-plot7.save('output/visualizations/7_scatter_price_quantity.png', dpi=300)
-print("Saved: output/visualizations/7_scatter_price_quantity.png")
+# Cap at 99th percentile to remove crazy outliers
+# price_99 = data['UnitPrice'].quantile(0.99)
+# qty_99   = data['Quantity'].quantile(0.99)
+
+# data_filtered = data[(data['UnitPrice'] <= price_99) &
+#                      (data['Quantity'] <= qty_99)]
+
+# data_sample = data_filtered.sample(min(10000, len(data_filtered)), random_state=42)
+
+# plot7 = (ggplot(data_sample, aes(x='UnitPrice', y='Quantity')) +
+#          geom_point(alpha=0.3, color='blue') +
+#          geom_smooth(method='lm', se=False, color='red') +
+#          xlab('Unit Price ($)') +
+#          ylab('Quantity') +
+#          ggtitle('Relationship Between Unit Price and Quantity') +
+#          theme(figure_size=(10, 6)))
+
+# plot7.save('output/visualizations/7_scatter_price_quantity.png', dpi=300)
+# print("Saved: output/visualizations/7_scatter_price_quantity.png")
 
 # 8. Top 10 Countries by Revenue
 print("\nCreating column chart: Top 10 Countries by Revenue...")
@@ -149,33 +159,33 @@ plot8.save('output/visualizations/8_column_top_countries.png', dpi=300)
 print("Saved: output/visualizations/8_column_top_countries.png")
 
 # 9. Density Plot - Distribution of Unit Prices
-print("\nCreating density plot: Distribution of Unit Prices...")
-plot9 = (ggplot(data, aes(x='UnitPrice')) +
-         geom_density(fill='blue', alpha=0.5) +
-         xlab('Unit Price ($)') +
-         ylab('Density') +
-         ggtitle('Distribution of Unit Prices') +
-         theme(figure_size=(10, 6))
-        )
-plot9.save('output/visualizations/9_density_unit_price.png', dpi=300)
-print("Saved: output/visualizations/9_density_unit_price.png")
+# print("\nCreating density plot: Distribution of Unit Prices...")
+# plot9 = (ggplot(data, aes(x='UnitPrice')) +
+#          geom_density(fill='blue', alpha=0.5) +
+#          xlab('Unit Price ($)') +
+#          ylab('Density') +
+#          ggtitle('Distribution of Unit Prices') +
+#          theme(figure_size=(10, 6))
+#         )
+# plot9.save('output/visualizations/9_density_unit_price.png', dpi=300)
+# print("Saved: output/visualizations/9_density_unit_price.png")
 
 # 10. Violin Plot - Revenue Distribution by Country (Top 5)
 print("\nCreating violin plot: Revenue Distribution by Top 5 Countries...")
-top_5_countries = data.groupby('Country')['TotalRevenue'].sum().sort_values(ascending=False).head(5).index
-data_top5 = data[data['Country'].isin(top_5_countries)]
+# top_5_countries = data.groupby('Country')['TotalRevenue'].sum().sort_values(ascending=False).head(5).index
+# data_top5 = data[data['Country'].isin(top_5_countries)]
 
-plot10 = (ggplot(data_top5, aes(x='Country', y='TotalRevenue', fill='Country')) +
-          geom_violin() +
-          geom_boxplot(fill='white', width=0.1) +
-          xlab('Country') +
-          ylab('Total Revenue ($)') +
-          labs(fill='Country') +
-          ggtitle('Revenue Distribution by Top 5 Countries') +
-          theme(figure_size=(12, 6), axis_text_x=element_text(angle=45, hjust=1))
-         )
-plot10.save('output/visualizations/10_violin_revenue_by_country.png', dpi=300)
-print("Saved: output/visualizations/10_violin_revenue_by_country.png")
+# plot10 = (ggplot(data_top5, aes(x='Country', y='TotalRevenue', fill='Country')) +
+#           geom_violin() +
+#           geom_boxplot(fill='white', width=0.1) +
+#           xlab('Country') +
+#           ylab('Total Revenue ($)') +
+#           labs(fill='Country') +
+#           ggtitle('Revenue Distribution by Top 5 Countries') +
+#           theme(figure_size=(12, 6), axis_text_x=element_text(angle=45, hjust=1))
+#          )
+# plot10.save('output/visualizations/10_violin_revenue_by_country.png', dpi=300)
+# print("Saved: output/visualizations/10_violin_revenue_by_country.png")
 
 # 11. Top 20 Products by Revenue
 print("\nCreating column chart: Top 20 Products by Revenue...")
