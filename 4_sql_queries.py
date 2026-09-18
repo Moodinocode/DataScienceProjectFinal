@@ -11,14 +11,22 @@ from sqlalchemy import create_engine
 import json
 import os
 
-# Database configuration (should match 3_database_import.py)
+# Database configuration, read from the environment (same variables as
+# 3_database_import.py) so no password is committed.
 DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'online_retail_db',
-    'user': 'postgres',
-    'password': '123456',
-    'port': 5432
+    'host': os.environ.get('PGHOST', 'localhost'),
+    'database': os.environ.get('PGDATABASE', 'online_retail_db'),
+    'user': os.environ.get('PGUSER', 'postgres'),
+    'password': os.environ.get('PGPASSWORD', ''),
+    'port': int(os.environ.get('PGPORT', 5432)),
 }
+
+if not DB_CONFIG['password']:
+    raise SystemExit(
+        "PGPASSWORD is not set.\n"
+        "Set it before running, e.g.  set PGPASSWORD=yourpassword  (Windows)\n"
+        "                     or      export PGPASSWORD=yourpassword  (macOS/Linux)"
+    )
 
 # Create output directory
 os.makedirs('output/queries', exist_ok=True)

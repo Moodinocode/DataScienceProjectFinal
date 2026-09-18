@@ -1,0 +1,13 @@
+# Generated output - all regenerable via run_all.py
+output/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/

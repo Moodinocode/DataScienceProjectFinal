@@ -13,14 +13,23 @@ import os
 from sqlalchemy import create_engine, text
 import json
 
-# Database configuration
+# Database configuration, read from the environment so no password is committed.
+# Copy .env.example to .env and set PGPASSWORD, or export these before running:
+#   PGHOST, PGDATABASE, PGUSER, PGPASSWORD, PGPORT
 DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'online_retail_db',
-    'user': 'postgres',  # Change as needed
-    'password': '123456',  # Change as needed
-    'port': 5432
+    'host': os.environ.get('PGHOST', 'localhost'),
+    'database': os.environ.get('PGDATABASE', 'online_retail_db'),
+    'user': os.environ.get('PGUSER', 'postgres'),
+    'password': os.environ.get('PGPASSWORD', ''),
+    'port': int(os.environ.get('PGPORT', 5432)),
 }
+
+if not DB_CONFIG['password']:
+    raise SystemExit(
+        "PGPASSWORD is not set.\n"
+        "Set it before running, e.g.  set PGPASSWORD=yourpassword  (Windows)\n"
+        "                     or      export PGPASSWORD=yourpassword  (macOS/Linux)"
+    )
 
 print("Loading cleaned dataset...")
 # Load the cleaned dataset

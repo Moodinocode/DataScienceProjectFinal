@@ -2,6 +2,29 @@
 
 This project performs comprehensive data cleaning, visualization, and database analysis on an online retail dataset. The project follows a structured approach to transform raw data into actionable business insights.
 
+> **Companion project:** [DataScienceProject](https://github.com/Moodinocode/DataScienceProject) analyses the same UCI Online Retail dataset from a different angle — statistical testing, a repeat-purchase model, and a Streamlit dashboard. This repository is the pipeline-and-database treatment: an ordered, reproducible cleaning process loaded into PostgreSQL and queried with SQL. The two are complements, not duplicates.
+
+## Database configuration
+
+`3_database_import.py` and `4_sql_queries.py` read their connection details from the environment, so no credentials live in the repository:
+
+| Variable | Default |
+|---|---|
+| `PGHOST` | `localhost` |
+| `PGDATABASE` | `online_retail_db` |
+| `PGUSER` | `postgres` |
+| `PGPASSWORD` | *required — no default* |
+| `PGPORT` | `5432` |
+
+Copy `.env.example` for reference, then set them before running:
+
+```bash
+set PGPASSWORD=yourpassword        # Windows
+export PGPASSWORD=yourpassword     # macOS/Linux
+```
+
+Both scripts exit with a clear message if `PGPASSWORD` is unset.
+
 ## Project Structure
 
 ```
